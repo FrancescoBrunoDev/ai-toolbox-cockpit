@@ -1,5 +1,9 @@
 # Implementation notes
 
+## 2026-10-10 — Halogen 0.18.0: speech-to-text models and the FLUX refresh
+
+The 0.18.0 image's `/opt/halogen/npu/models.txt` carries eleven models: the nine the catalogue already had, plus `qwen3-asr-0.6b` and `qwen3-asr-1.7b` (`task=transcribe`, ~1.5 and ~3.8 GiB, serving `/v1/audio/transcriptions`), and it re-issues `flux2-klein-4b` at `bad707379884000d797b2d345fd895d0b98fe345` for the 1024x1024 image sizes (`devices.hnpm` plus `u3.elf`–`u10.elf` added, the checkpoint re-issued). The catalogue now pins those revisions, collects the ASR models under a new `transcription` task, and leaves all three off by default beside the 4B trio. Every file the record lists matches the Hub at those revisions by size and SHA256 (49 files: 17 for FLUX, 16 for each ASR model); the FLUX `LICENSE` stays as the catalogue's only extra file. A volume holding the 0.17.x FLUX files must repair it before images work again; the ASR models are new downloads. Live ASR and re-issued-FLUX validation is still pending.
+
 ## 2026-10-10 — Halogen 0.17.5 keeps the same NPU record
 
 `ghcr.io/peonist-ai/halogen-flash-server:0.17.5` (digest `sha256:df161433d825e901d91811fe28561bc3ef830a552bbb59c1aaf58f8fd4e9bc1d`, built 2026-10-10T14:35Z) ships a byte-identical `/opt/halogen/npu/models.txt` to 0.17.4's: the same nine models, revisions, `devices_from` donors and 71 files. Five `peonist-ai/halogen-npu-*` Hub repositories gained newer commits after 0.17.4 was built, but the 0.17.5 record does not name them, so the catalogue keeps the revisions the image verifies. The catalogue also fetches `LICENSE` for `flux2-klein-4b` (9584 bytes, present at the pinned revision; the container's record does not list it and ignores it). No pin changed, and 0.17.5's own changes are request-level or engine-internal, so no Cockpit launch control was added for them.

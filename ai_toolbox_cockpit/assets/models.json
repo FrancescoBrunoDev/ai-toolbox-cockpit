@@ -3705,7 +3705,7 @@
           "name": "FLUX.2 Klein 4B \u2014 images",
           "task": "images",
           "repo": "peonist-ai/halogen-npu-flux2-klein-4b",
-          "revision": "b81a04f369822a48454f288d16945428a507db0d",
+          "revision": "bad707379884000d797b2d345fd895d0b98fe345",
           "default_enabled": false,
           "files": [
             {
@@ -3722,7 +3722,7 @@
             },
             {
               "path": "devices/devices.hnpm",
-              "size_bytes": 8392
+              "size_bytes": 35941
             },
             {
               "path": "devices/taef2.safetensors",
@@ -3741,12 +3741,192 @@
               "size_bytes": 11979320
             },
             {
+              "path": "devices/u3.elf",
+              "size_bytes": 13304312
+            },
+            {
+              "path": "devices/u4.elf",
+              "size_bytes": 13203224
+            },
+            {
+              "path": "devices/u5.elf",
+              "size_bytes": 14240312
+            },
+            {
+              "path": "devices/u6.elf",
+              "size_bytes": 13722616
+            },
+            {
+              "path": "devices/u7.elf",
+              "size_bytes": 15176312
+            },
+            {
+              "path": "devices/u8.elf",
+              "size_bytes": 14244248
+            },
+            {
+              "path": "devices/u9.elf",
+              "size_bytes": 14765880
+            },
+            {
+              "path": "devices/u10.elf",
+              "size_bytes": 15809144
+            },
+            {
               "path": "flux2-klein-4b.hnpw",
-              "size_bytes": 8021803336
+              "size_bytes": 8028493384
             },
             {
               "path": "tokenizer/tokenizer.json",
               "size_bytes": 11422654
+            }
+          ]
+        },
+        {
+          "id": "qwen3-asr-0.6b",
+          "name": "Qwen3 ASR 0.6B \u2014 speech to text",
+          "task": "transcription",
+          "repo": "peonist-ai/halogen-npu-qwen3-asr-0.6b",
+          "revision": "1eeb82477eb9d4ab56e27273cacf79e6bbc3632b",
+          "default_enabled": false,
+          "files": [
+            {
+              "path": "devices/NOTICE.md",
+              "size_bytes": 3248
+            },
+            {
+              "path": "devices/consts.hnpb",
+              "size_bytes": 1054016
+            },
+            {
+              "path": "devices/devices.hnpm",
+              "size_bytes": 9864
+            },
+            {
+              "path": "devices/fold.bin",
+              "size_bytes": 3584
+            },
+            {
+              "path": "devices/u0.elf",
+              "size_bytes": 4931968
+            },
+            {
+              "path": "devices/u1.elf",
+              "size_bytes": 4973552
+            },
+            {
+              "path": "devices/u2.elf",
+              "size_bytes": 5456000
+            },
+            {
+              "path": "devices/u3.elf",
+              "size_bytes": 6505552
+            },
+            {
+              "path": "devices/u4.elf",
+              "size_bytes": 7398112
+            },
+            {
+              "path": "enc/NOTICE.md",
+              "size_bytes": 3248
+            },
+            {
+              "path": "enc/devices.hnpm",
+              "size_bytes": 2607
+            },
+            {
+              "path": "enc/u0.elf",
+              "size_bytes": 2706112
+            },
+            {
+              "path": "enc/u1.elf",
+              "size_bytes": 3020400
+            },
+            {
+              "path": "enc/weights.hnpw",
+              "size_bytes": 243748296
+            },
+            {
+              "path": "qwen3-asr-0.6b.hnpw",
+              "size_bytes": 1286181400
+            },
+            {
+              "path": "tokenizer/tokenizer.json",
+              "size_bytes": 11424116
+            }
+          ]
+        },
+        {
+          "id": "qwen3-asr-1.7b",
+          "name": "Qwen3 ASR 1.7B \u2014 speech to text",
+          "task": "transcription",
+          "repo": "peonist-ai/halogen-npu-qwen3-asr-1.7b",
+          "revision": "965535471b51d0cd1a6ebf526cc704a7595f9f8e",
+          "default_enabled": false,
+          "files": [
+            {
+              "path": "devices/NOTICE.md",
+              "size_bytes": 3248
+            },
+            {
+              "path": "devices/consts.hnpb",
+              "size_bytes": 1054016
+            },
+            {
+              "path": "devices/devices.hnpm",
+              "size_bytes": 9881
+            },
+            {
+              "path": "devices/fold.bin",
+              "size_bytes": 3584
+            },
+            {
+              "path": "devices/u0.elf",
+              "size_bytes": 4934368
+            },
+            {
+              "path": "devices/u1.elf",
+              "size_bytes": 4975952
+            },
+            {
+              "path": "devices/u2.elf",
+              "size_bytes": 5452800
+            },
+            {
+              "path": "devices/u3.elf",
+              "size_bytes": 6500240
+            },
+            {
+              "path": "devices/u4.elf",
+              "size_bytes": 6752784
+            },
+            {
+              "path": "enc/NOTICE.md",
+              "size_bytes": 3248
+            },
+            {
+              "path": "enc/devices.hnpm",
+              "size_bytes": 3021
+            },
+            {
+              "path": "enc/u0.elf",
+              "size_bytes": 3106608
+            },
+            {
+              "path": "enc/u1.elf",
+              "size_bytes": 3462928
+            },
+            {
+              "path": "enc/weights.hnpw",
+              "size_bytes": 372124936
+            },
+            {
+              "path": "qwen3-asr-1.7b.hnpw",
+              "size_bytes": 3628769816
+            },
+            {
+              "path": "tokenizer/tokenizer.json",
+              "size_bytes": 11424116
             }
           ]
         }

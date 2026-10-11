@@ -432,7 +432,7 @@ class HalogenTests(TestCase):
         self.assertEqual([entry["id"] for entry in entries], [
             "decider-0.8b", "decider-4b", "qwen3-embedding-0.6b", "qwen3-embedding-4b",
             "qwen3-reranker-0.6b", "qwen3-reranker-4b", "qwen3guard-gen-0.6b",
-            "qwen3.5-2b", "flux2-klein-4b",
+            "qwen3.5-2b", "flux2-klein-4b", "qwen3-asr-0.6b", "qwen3-asr-1.7b",
         ])
         self.assertEqual([entry["id"] for entry in entries if entry.get("default_enabled")], [
             "decider-0.8b", "qwen3-embedding-0.6b", "qwen3-reranker-0.6b",

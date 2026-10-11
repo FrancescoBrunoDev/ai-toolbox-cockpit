@@ -12,7 +12,7 @@ MATURITY_STATES = frozenset({"stable", "experimental"})
 LLAMA_KV_CACHE_TYPES = frozenset({"default", "f16", "q8_0", "q5_1", "q5_0", "q4_1", "q4_0"})
 LLAMA_LOAD_MODES = frozenset({"none", "mmap", "dio"})
 NPU_TASKS = frozenset({
-    "decisions", "embeddings", "rerank", "moderation", "generation", "images",
+    "decisions", "embeddings", "rerank", "moderation", "generation", "images", "transcription",
 })
 MODEL_KINDS = {
     "r9v": "r9v_package",
