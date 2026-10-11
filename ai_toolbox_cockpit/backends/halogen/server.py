@@ -65,7 +65,7 @@ class HalogenServerPanel(BackendServerPanel):
             for fields in (
                 (("host", "Host", "127.0.0.1"), ("port", "Port", "8731")),
                 (("context", "Request context", "262144"), ("pool", "KV pool positions", "524288"),
-                 ("slots", "Concurrent slots", "4"), ("max-tok", "Prefill chunk (working memory)", "32768")),
+                 ("slots", "Concurrent slots", "6"), ("max-tok", "Prefill chunk (working memory)", "16384")),
             ):
                 with Horizontal(classes="compact-fields"):
                     for control, label, default in fields:
@@ -111,7 +111,7 @@ class HalogenServerPanel(BackendServerPanel):
         for control in ("host", "port", "context", "pool", "slots"):
             if control in settings:
                 self.query_one(f"#halogen-{control}", Input).value = str(settings[control])
-        self.query_one("#halogen-max-tok", Input).value = str(settings.get("max_tok", "32768"))
+        self.query_one("#halogen-max-tok", Input).value = str(settings.get("max_tok", "16384"))
         self.set_platform(self.app.active_platform_id)
         self.refresh_model_inventory()
 

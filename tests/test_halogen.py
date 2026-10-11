@@ -262,7 +262,8 @@ class HalogenTests(TestCase):
             with self.subTest(bundle=entry["id"]), tempfile.TemporaryDirectory() as temporary:
                 root = Path(temporary)
                 bundle = small_bundle(root, entry)
-                with patch("ai_toolbox_cockpit.backends.halogen.runner.get_bundle", return_value=bundle):
+                with patch("ai_toolbox_cockpit.backends.halogen.runner.DISK_CACHE", root / "absent"), \
+                     patch("ai_toolbox_cockpit.backends.halogen.runner.get_bundle", return_value=bundle):
                     for engine in ("podman", "docker"):
                         options = dict(engine=engine, image=toolbox.image, engine_args=[],
                                        platform_id="strix-halo", models_dir=root, bundle_id=bundle["id"])
@@ -353,7 +354,8 @@ class HalogenTests(TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary) / "models with spaces"
             bundle = small_bundle(root)
-            with patch("ai_toolbox_cockpit.backends.halogen.runner.get_bundle", return_value=bundle):
+            with patch("ai_toolbox_cockpit.backends.halogen.runner.DISK_CACHE", Path(temporary) / "absent"), \
+                 patch("ai_toolbox_cockpit.backends.halogen.runner.get_bundle", return_value=bundle):
                 for engine in ("podman", "docker"):
                     command = build_server_cmd(engine=engine, image=toolbox.image,
                                                engine_args=list(profile.engine_args), platform_id="strix-halo",
@@ -367,7 +369,7 @@ class HalogenTests(TestCase):
                     self.assertIn("--cap-drop=NET_RAW", command)
                     self.assertIn("no-new-privileges", command)
                     self.assertIn("HALOGEN_API_PORT=9000", command)
-                    self.assertIn("HALOGEN_MAX_TOK=32768", command)
+                    self.assertIn("HALOGEN_MAX_TOK=16384", command)
                     self.assertIn(f"HALOGEN_CK_OVERLAY=/models/{bundle['overlay']}", command)
                     self.assertIn("HALOGEN_TOKENIZER=/models/tokenizer", command)
                     mounts = [command[i + 1] for i, arg in enumerate(command) if arg == "-v"]
@@ -383,6 +385,31 @@ class HalogenTests(TestCase):
                                              engine_args=list(profile.engine_args), platform_id="strix-halo",
                                              models_dir=root, bundle_id=bundle["id"], port=9000, max_tokens=16384)
                     self.assertIn("HALOGEN_MAX_TOK=16384", tuned)
+
+    def test_host_tuned_profile_carries_its_environment_and_disk_cache(self):
+        toolbox = load_toolbox_catalog().toolboxes[TOOLBOX_ID]
+        profile = load_toolbox_catalog().runtime_profiles[toolbox.runtime_profile]
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            bundle = small_bundle(root)
+            cache = root / "cache"
+            cache.mkdir()
+            options = dict(engine="podman", image=toolbox.image, engine_args=list(profile.engine_args),
+                           platform_id="strix-halo", models_dir=root, bundle_id=bundle["id"])
+            with patch("ai_toolbox_cockpit.backends.halogen.runner.DISK_CACHE", cache), \
+                 patch("ai_toolbox_cockpit.backends.halogen.runner.get_bundle", return_value=bundle):
+                command = build_server_cmd(**options)
+            self.assertIn(f"{cache}:/cache", command)
+            self.assertIn("HALOGEN_CACHE_DIR=/cache", command)
+            self.assertIn("HALOGEN_CACHE_DISK_GIB=64", command)
+            for key, value in (("HALOGEN_MAX_TOKENS_DEFAULT", "16384"), ("HALOGEN_INDEXER_BUDGET", "4096"),
+                               ("HALOGEN_COMPOSABLE_CONTEXT", "1"), ("HALOGEN_FORK", "1")):
+                self.assertIn(f"{key}={value}", command)
+            # No cache directory on the host: the launch still works, only the disk tier is off.
+            with patch("ai_toolbox_cockpit.backends.halogen.runner.DISK_CACHE", root / "absent"), \
+                 patch("ai_toolbox_cockpit.backends.halogen.runner.get_bundle", return_value=bundle):
+                command = build_server_cmd(**options)
+            self.assertNotIn("HALOGEN_CACHE_DIR=/cache", command)
 
     def test_profile_cannot_override_network_or_add_host_access(self):
         with tempfile.TemporaryDirectory() as temporary:

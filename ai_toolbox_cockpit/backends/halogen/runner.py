@@ -13,6 +13,19 @@ from .model_manager import (
 
 CONTAINER_NAME = "ai-toolbox-cockpit-halogen-server"
 
+# Host-tuned profile. On a 128 GB Strix Halo box that also hosts the NPU models the scarce
+# resource is page cache for the 47.7 GiB n-gram lookup table, not KV pool: a thinner prefill
+# arena and a smaller retained-message budget buy it back, and the win shows up on every long
+# cold prefill (compaction, post-restart). Priced off upstream's measured tables.
+TUNED_ENVIRONMENT = {
+    "HALOGEN_MAX_TOKENS_DEFAULT": "16384",      # xhigh reasoning does not fit 8192 on agent turns
+    "HALOGEN_INDEXER_BUDGET": "4096",           # 2 more of 96 planted facts retrieved, -3% decode
+    "HALOGEN_COMPOSABLE_CONTEXT": "1",          # harness compaction reuses kept tool results
+    "HALOGEN_COMPOSABLE_CONTEXT_BYTES": "2147483648",
+    "HALOGEN_FORK": "1",                       # hermes-agent / Pi sub-agents share named-session state
+}
+DISK_CACHE = Path("/mnt/fanxiang/halogen-cache")  # ext4, accepts the direct I/O the cache needs
+
 
 def _validated_engine_args(arguments: list[str]) -> list[str]:
     """Only retain the reviewed GPU profile; reject isolation overrides."""
@@ -38,7 +51,7 @@ def build_server_cmd(
     *, engine: str, image: str, engine_args: list[str], platform_id: str,
     models_dir: Path, bundle_id: str, host: str = "127.0.0.1", port: int = 8731,
     context_size: int = 262144, kv_pool_positions: int = 524288,
-    kv_slots: int = 4, prompt_cache: str = "2", max_tokens: int = 32768,
+    kv_slots: int = 6, prompt_cache: str = "2", max_tokens: int = 16384,
     npu_models: tuple[str, ...] = (),
 ) -> list[str]:
     if platform_id != "strix-halo":
@@ -94,6 +107,7 @@ def build_server_cmd(
         "HALOGEN_KV_SLOTS": str(kv_slots),
         "HALOGEN_PROMPT_CACHE": prompt_cache,
         "HALOGEN_MAX_TOK": str(max_tokens),
+        **TUNED_ENVIRONMENT,
     }
     if bundle.get("overlay"):
         environment["HALOGEN_CK_OVERLAY"] = f"/models/{bundle['overlay']}"
@@ -115,6 +129,10 @@ def build_server_cmd(
         if not source.is_relative_to(directory) or ":" in str(source):
             raise ValueError("Bundle files must stay inside the models directory and have mount-safe paths.")
         command.extend(["-v", f"{source}:/models/{item['path']}:ro"])
+    if DISK_CACHE.is_dir():
+        environment["HALOGEN_CACHE_DIR"] = "/cache"
+        environment["HALOGEN_CACHE_DISK_GIB"] = "64"
+        command.extend(["-v", f"{DISK_CACHE}:/cache"])
     mounted: set[str] = set()
     for entry in npu_entries:
         for owner in (entry["id"], npu_device_owner(entry)):
